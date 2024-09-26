@@ -1,5 +1,5 @@
 # A Simple Synthetic Image Generator
-A simple synthetic training data generator for object detection AI, currently only support label data in YOLO format (https://docs.ultralytics.com/datasets/detect/#ultralytics-yolo-format)
+A GUI simple synthetic training data generator for object detection AI, currently only support label data in YOLO format (https://docs.ultralytics.com/datasets/detect/#ultralytics-yolo-format)
 
 ## Requirements
 Python >= 3.8
@@ -22,11 +22,16 @@ python main.py
 
 Alternatively, **launch.bat** can be used to launch the application for Windows user
 
+Note: Preparing object images with transparent background is highly recommended
+
 ## Planned Features
 
+- Multiple object classes support
 - Randomized rotation
-- Multiple object classes
+- Randomized background noise
+- Object overlap prevention option
 - CLI
+- Segmentation data generation functionality
 
 ## Special Thanks
 
