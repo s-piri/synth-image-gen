@@ -1,5 +1,5 @@
 # A Simple Synthetic Image Generator
-A simple synthetic training data generator for object detection AI, currently only support label data in YOLO format (https://yolov8.org/yolov8-label-format/)
+A simple synthetic training data generator for object detection AI, currently only support label data in YOLO format (https://docs.ultralytics.com/datasets/detect/#ultralytics-yolo-format)
 
 ## Requirements
 Python >= 3.8
