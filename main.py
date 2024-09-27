@@ -149,6 +149,11 @@ class SyntheticImageGenerator:
         for _ in range(obj_count):
             obj_img_path = random.choice(self.object_images)
             obj_img = Image.open(obj_img_path)
+     
+            # Alpha Channel is required for pasting with .paste
+            if obj_img.mode != 'RGBA':
+                obj_img = obj_img.convert('RGBA')
+                
             # Randomize rotation
             rot_ang = random.uniform(rot_min, rot_max)
             obj_img = obj_img.rotate(rot_ang,)
@@ -162,10 +167,6 @@ class SyntheticImageGenerator:
             # Randomize position
             pos_x = random.randint(0, bg_width - obj_width)
             pos_y = random.randint(0, bg_height - obj_height)
-
-            # Alpha Channel is required for pasting with .paste
-            if obj_img.mode != 'RGBA':
-                obj_img = obj_img.convert('RGBA')
 
             bg_img.paste(obj_img, (pos_x, pos_y), obj_img)
 
