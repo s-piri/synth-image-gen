@@ -23,6 +23,9 @@ class SyntheticImageGenerator:
         self.obj_min_var = tk.DoubleVar(value=1.0)
         self.obj_max_var = tk.DoubleVar(value=10.0)
 
+        self.rot_min_var = tk.DoubleVar(value=-90.0)
+        self.rot_max_var = tk.DoubleVar(value=90.0)
+
         # The assigned value beside 1 is somehow not reflected on ttk.LabeledScale
         self.num_images_var = tk.IntVar(value=1)
 
@@ -72,8 +75,16 @@ class SyntheticImageGenerator:
                                             line_s_color="#57c8ff", line_color="#9c9c9c", line_width=4)
         self.obj_num_slider.grid(row=4, column=1, padx=10, pady=10)
 
+        ttk.Label(main_frame, text="Rotation Range (Min-Max)").grid(row=5, column=0, padx=10, pady=10)
+        self.rot_num_slider = RangeSliderH(main_frame, variables=[self.rot_min_var, self.rot_max_var], 
+                                           min_val=-180, max_val=180, step_size=1, padX=18, Width=150, Height=50,
+                                            bgColor='#1c1c1c', font_family="Segoe UI Variable", font_size=11, font_color='#fafafa',
+                                            bar_color_inner="#57c8ff", bar_color_outer="#595959", bar_radius=10,
+                                            line_s_color="#57c8ff", line_color="#9c9c9c", line_width=4)
+        self.rot_num_slider.grid(row=5, column=1, padx=10, pady=10)
+
         generate_button = ttk.Button(main_frame, text="Generate", command=self.generate_synthetic_images)
-        generate_button.grid(row=5, column=0, columnspan=2, pady=20)
+        generate_button.grid(row=6, column=0, columnspan=2, pady=20)
 
     def select_background_images(self):
         """Open file dialog to select background images."""
@@ -97,6 +108,8 @@ class SyntheticImageGenerator:
         scale_max = self.scale_max_var.get()
         obj_min = int(self.obj_min_var.get())
         obj_max = int(self.obj_max_var.get())
+        rot_min = self.rot_min_var.get()
+        rot_max = self.rot_max_var.get()
 
         output_folder = os.path.join(os.getcwd(), "output")
         if not os.path.exists(output_folder):
@@ -116,7 +129,7 @@ class SyntheticImageGenerator:
         for i in range(num_images):
             bg_img_path = random.choice(self.background_images)
             obj_count = random.randint(obj_min, obj_max)
-            self.create_synthetic_image(bg_img_path, obj_count, scale_min, scale_max, i, output_folder)
+            self.create_synthetic_image(bg_img_path, obj_count, scale_min, scale_max, rot_min, rot_max, i, output_folder)
 
             # Update the progress bar
             progress_bar["value"] = i + 1
@@ -125,7 +138,7 @@ class SyntheticImageGenerator:
         # Close the progress window automatically after 1 sec
         progress_window.after(1000, progress_window.destroy)
 
-    def create_synthetic_image(self, bg_img_path, obj_count, scale_min, scale_max, img_num, output_folder):
+    def create_synthetic_image(self, bg_img_path, obj_count, scale_min, scale_max, rot_min, rot_max, img_num, output_folder):
         """Generate one synthetic image with randomized objects and save."""
         bg_img = Image.open(bg_img_path)
         bg_width, bg_height = bg_img.size
@@ -136,6 +149,9 @@ class SyntheticImageGenerator:
         for _ in range(obj_count):
             obj_img_path = random.choice(self.object_images)
             obj_img = Image.open(obj_img_path)
+            # Randomize rotation
+            rot_ang = random.uniform(rot_min, rot_max)
+            obj_img = obj_img.rotate(rot_ang,)
 
             # Randomize scale
             scale_factor = random.uniform(scale_min, scale_max)
