@@ -19,15 +19,32 @@ Alternatively, **install.bat** can be used to install for Windows user
 ```
 python main.py
 ```
-
 Alternatively, **launch.bat** can be used to launch the application for Windows user
 
-Note: Preparing object images with transparent background is highly recommended
+1. Select Background Images
+2. Select Object Image Folder
+3. Choose the number of image to be generated, and parameters
+
+Note: The object image folder must be structured as shown below:
+(the subfolder names represent class indexes of the images it contain)
+
+```bash
+│
+└───object_images
+    ├───0
+    │   ├───img1.png
+    │   └───img2.png
+    │
+    └───1
+        ├───img1.png
+        └───img2.png
+```
+Note2: Preparing object images with transparent background is highly recommended
 
 ## Planned Features
 
-- Multiple object classes support
-- Randomized rotation
+- ~~Multiple object classes support~~
+- ~~Randomized rotation~~
 - Randomized background noise
 - Object overlap prevention option
 - CLI
