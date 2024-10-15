@@ -176,7 +176,7 @@ class SyntheticImageGenerator:
                 
             # Randomize rotation
             rot_ang = random.uniform(rot_min, rot_max)
-            obj_img = obj_img.rotate(rot_ang,)
+            obj_img = obj_img.rotate(rot_ang, expand=True)
 
             # Randomize scale
             scale_factor = random.uniform(scale_min, scale_max)
