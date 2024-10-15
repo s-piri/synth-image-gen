@@ -29,7 +29,6 @@ Note: The object image folder must be structured as shown below:
 (the subfolder names represent class indexes of the images it contain)
 
 ```bash
-│
 └───object_images
     ├───0
     │   ├───img1.png
