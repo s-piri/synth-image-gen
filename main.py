@@ -39,13 +39,13 @@ class SyntheticImageGenerator:
         bg_button = ttk.Button(main_frame, text="Select Background Images", command=self.select_background_images)
         bg_button.grid(row=0, column=0, padx=10, pady=10)
 
-        obj_button = ttk.Button(main_frame, text="Select Object Images", command=self.select_object_images)
+        obj_button = ttk.Button(main_frame, text="Select Object Images Folder", command=self.select_object_image_folder)
         obj_button.grid(row=1, column=0, padx=10, pady=10)
 
         self.bg_label = ttk.Label(main_frame, text="0 Images Selected")
         self.bg_label.grid(row=0, column=1, padx=10, pady=10)
 
-        self.obj_label = ttk.Label(main_frame, text="0 Images Selected")
+        self.obj_label = ttk.Label(main_frame, text="0 Classes Selected")
         self.obj_label.grid(row=1, column=1, padx=10, pady=10)
 
         # Slider for the number of images to generate
@@ -90,6 +90,26 @@ class SyntheticImageGenerator:
         """Open file dialog to select background images."""
         self.background_images = filedialog.askopenfilenames(title="Select Background Images")
         self.update_label(self.bg_label, self.background_images)
+    
+    def select_object_image_folder(self):
+        """Open file dialog to select the main object image folder and process the subfolders"""
+        self.main_folder = filedialog.askdirectory(title="Select Main Object Image Folder")
+        
+        if not self.main_folder:  # If no folder is selected, return early
+            return
+        
+        subfolder_list = [subfolder for subfolder in os.listdir(self.main_folder) 
+                          if (os.path.isdir(os.path.join(self.main_folder, subfolder)) and subfolder.isdigit())] # Filters for folder that is a digit
+        
+        for subfolder_name in subfolder_list:
+            subfolder_path = os.path.join(self.main_folder, subfolder_name)
+            for file_name in os.listdir(subfolder_path):
+                if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
+                    image_path = os.path.join(subfolder_path, file_name)
+                    self.object_images.append((subfolder_name, image_path))
+
+        print(self.object_images)  # For debugging
+        self.obj_label['text'] = f"{len(subfolder_list)} Classes Selected"
 
     def select_object_images(self):
         """Open file dialog to select object images."""
@@ -147,7 +167,7 @@ class SyntheticImageGenerator:
 
         # Loop to add objects
         for _ in range(obj_count):
-            obj_img_path = random.choice(self.object_images)
+            class_idx, obj_img_path = random.choice(self.object_images)
             obj_img = Image.open(obj_img_path)
      
             # Alpha Channel is required for pasting with .paste
@@ -177,9 +197,7 @@ class SyntheticImageGenerator:
             norm_width = obj_width / bg_width
             norm_height = obj_height / bg_height
 
-            # Only work with a single class for now
-            # Todo: Add multiple classes support
-            labels.append(f"0 {x_center:.6f} {y_center:.6f} {norm_width:.6f} {norm_height:.6f}")
+            labels.append(f"{class_idx} {x_center:.6f} {y_center:.6f} {norm_width:.6f} {norm_height:.6f}")
 
         output_path = os.path.join(output_folder, f"synthetic_{img_num}.jpg")
         bg_img.save(output_path)
