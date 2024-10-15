@@ -14,8 +14,8 @@ class SyntheticImageGenerator:
         sv_ttk.use_dark_theme()
 
         # Initialize variables
-        self.background_images = []
-        self.object_images = []
+        self.background_images = [] # contains a list of image_path
+        self.object_images = [] # contains a list of tuples (subfolder_name, image_path)
 
         self.scale_min_var = tk.DoubleVar(value=0.2)
         self.scale_max_var = tk.DoubleVar(value=1.0)
@@ -108,10 +108,10 @@ class SyntheticImageGenerator:
                     image_path = os.path.join(subfolder_path, file_name)
                     self.object_images.append((subfolder_name, image_path))
 
-        print(self.object_images)  # For debugging
+        #print(self.object_images)  # For debugging
         self.obj_label['text'] = f"{len(subfolder_list)} Classes Selected"
 
-    def select_object_images(self):
+    def select_object_images(self): # Deprecated
         """Open file dialog to select object images."""
         self.object_images = filedialog.askopenfilenames(title="Select Object Images")
         self.update_label(self.obj_label, self.object_images)
