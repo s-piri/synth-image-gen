@@ -231,7 +231,7 @@ class SyntheticImageGenerator:
 
             labels.append(f"{class_idx} {x_center:.6f} {y_center:.6f} {norm_width:.6f} {norm_height:.6f}")
 
-        output_path = os.path.join(output_folder, f"synthetic_{img_num}.jpg")
+        output_path = os.path.join(output_folder, f"synthetic_{img_num}.png")
         bg_img.save(output_path)
 
         label_path = os.path.join(output_folder, f"synthetic_{img_num}.txt")
