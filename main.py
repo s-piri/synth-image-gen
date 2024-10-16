@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageTk
 import random
 import os
@@ -216,6 +216,11 @@ class SyntheticImageGenerator:
             obj_height = int(obj_img.height * scale_factor)
             obj_img = obj_img.resize((obj_width, obj_height))
 
+            # Skip if the object is larger than background
+            if bg_width - obj_width < 0 or bg_height - obj_height < 0:
+                messagebox.showerror("Error", f"Object size {obj_width}x{obj_height} is larger than BG size {bg_width}x{bg_height}, normalization is recommended")
+                continue
+            
             # Randomize position
             pos_x = random.randint(0, bg_width - obj_width)
             pos_y = random.randint(0, bg_height - obj_height)
