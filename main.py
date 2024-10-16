@@ -47,44 +47,66 @@ class SyntheticImageGenerator:
 
         self.obj_label = ttk.Label(main_frame, text="0 Classes Selected")
         self.obj_label.grid(row=1, column=1, padx=10, pady=10)
-
-        # Slider for the number of images to generate
-        ttk.Label(main_frame, text="Number of Images").grid(row=2, column=0, padx=10, pady=10)
-        # In case LabeledScale is not supported, use ttk.Scale instead
-        try:
-            self.num_images_slider = ttk.LabeledScale(main_frame, variable=self.num_images_var, from_=1, to=100)
-        except:
-             self.num_images_slider = ttk.Scale(main_frame, variable=self.num_images_var, from_=1, to=100)
-        self.num_images_slider.grid(row=2, column=1, padx=10, pady=10)
-
-        # RangeSlider for object scaling (Scale Range)
-        ttk.Label(main_frame, text="Scale Range (Min-Max)").grid(row=3, column=0, padx=10, pady=10)
-        self.scale_range_slider = RangeSliderH(main_frame, variables=[self.scale_min_var, self.scale_max_var], 
-                                               min_val=0.2, max_val=3.0, step_size=0.1, padX=18, Width=150, Height=50,
-                                               bgColor='#1c1c1c', font_family="Segoe UI Variable", font_size=11, font_color='#fafafa',
-                                               bar_color_inner="#57c8ff", bar_color_outer="#595959", bar_radius=10,
-                                               line_s_color="#57c8ff", line_color="#9c9c9c", line_width=4)
-        self.scale_range_slider.grid(row=3, column=1, padx=10, pady=10)
-
-        # RangeSlider for the number of objects per image
-        ttk.Label(main_frame, text="Objects per Image (Min-Max)").grid(row=4, column=0, padx=10, pady=10)
-        self.obj_num_slider = RangeSliderH(main_frame, variables=[self.obj_min_var, self.obj_max_var], 
-                                           min_val=1, max_val=20, step_size=1, padX=18, Width=150, Height=50,
-                                            bgColor='#1c1c1c', font_family="Segoe UI Variable", font_size=11, font_color='#fafafa',
-                                            bar_color_inner="#57c8ff", bar_color_outer="#595959", bar_radius=10,
-                                            line_s_color="#57c8ff", line_color="#9c9c9c", line_width=4)
-        self.obj_num_slider.grid(row=4, column=1, padx=10, pady=10)
-
-        ttk.Label(main_frame, text="Rotation Range (Min-Max)").grid(row=5, column=0, padx=10, pady=10)
-        self.rot_num_slider = RangeSliderH(main_frame, variables=[self.rot_min_var, self.rot_max_var], 
-                                           min_val=-180, max_val=180, step_size=1, padX=18, Width=150, Height=50,
-                                            bgColor='#1c1c1c', font_family="Segoe UI Variable", font_size=11, font_color='#fafafa',
-                                            bar_color_inner="#57c8ff", bar_color_outer="#595959", bar_radius=10,
-                                            line_s_color="#57c8ff", line_color="#9c9c9c", line_width=4)
-        self.rot_num_slider.grid(row=5, column=1, padx=10, pady=10)
+        
+        self.create_slider_with_entry(main_frame, "Number of Images", self.num_images_var, 1, 100, row=2, column=0)
+        self.create_range_slider_with_entries(main_frame, "Scale Range (Min-Max)", [self.scale_min_var, self.scale_max_var], 0.2, 3.0, 0.1, row=3)
+        self.create_range_slider_with_entries(main_frame, "Objects per Image (Min-Max)", [self.obj_min_var, self.obj_max_var], 1, 20, 1, row=4)
+        self.create_range_slider_with_entries(main_frame, "Rotation Range (Min-Max)", [self.rot_min_var, self.rot_max_var], -180, 180, 1, row=5)
 
         generate_button = ttk.Button(main_frame, text="Generate", command=self.generate_synthetic_images)
         generate_button.grid(row=6, column=0, columnspan=2, pady=20)
+
+    def create_slider_with_entry(self, main_frame, label_text, variable, from_, to, row, column):
+        ttk.Label(main_frame, text=label_text).grid(row=row, column=0, padx=10, pady=10)
+        num_entry = ttk.Entry(main_frame, textvariable=variable, width=5)
+        num_entry.grid(row=row, column=1, padx=10, pady=10)  # Entry on the left
+        try:
+            slider = ttk.LabeledScale(main_frame, variable=variable, from_=from_, to=to)
+        except:
+            slider = ttk.Scale(main_frame, variable=variable, from_=from_, to=to)
+        slider.grid(row=row, column=2, padx=10, pady=10)  # Slider to the right of the entry
+        # Bind the entry to update the slider
+        num_entry.bind("<Return>", lambda e: self.update_slider_from_entry(num_entry, slider, variable, from_, to))
+
+    def create_range_slider_with_entries(self, main_frame, label_text, variables, min_val, max_val, step_size, row):
+        ttk.Label(main_frame, text=label_text).grid(row=row, column=0, padx=10, pady=10)
+        min_entry = ttk.Entry(main_frame, textvariable=variables[0], width=5)
+        min_entry.grid(row=row, column=1, padx=5, pady=10)  # Entry for min value on the left
+        range_slider = RangeSliderH(main_frame, variables=variables, min_val=min_val, max_val=max_val, 
+                                    step_size=step_size, padX=18, Width=150, Height=50, bgColor='#1c1c1c', 
+                                    font_family="Segoe UI Variable", font_size=11, font_color='#fafafa', 
+                                    bar_color_inner="#57c8ff", bar_color_outer="#595959", bar_radius=10,
+                                    line_s_color="#57c8ff", line_color="#9c9c9c", line_width=4)
+        range_slider.grid(row=row, column=2, pady=10)  # Slider in the middle
+        max_entry = ttk.Entry(main_frame, textvariable=variables[1], width=5)
+        max_entry.grid(row=row, column=3, pady=10)  # Entry for max value on the right
+        
+        # Bind entries to update the slider when the entry value changes with limits
+        min_entry.bind("<Return>", lambda e: self.update_range_slider_from_entries(range_slider, variables[0], variables[1], min_val, max_val))
+        max_entry.bind("<Return>", lambda e: self.update_range_slider_from_entries(range_slider, variables[0], variables[1], min_val, max_val))
+
+    # Function to limit the entry value based on min_val and max_val
+    def limit_value(self, var, min_val, max_val):
+        try:
+            value = float(var.get())
+            if value < min_val:
+                var.set(min_val)
+            elif value > max_val:
+                var.set(max_val)
+        except tk.TclError:
+            # If the input is empty, reset it to min_val
+            if var.get() == "":
+                var.set(min_val)
+
+    # Function to update the slider when the entry value changes and apply value limits
+    def update_slider_from_entry(self, slider, var, min_val, max_val):
+        self.limit_value(var, min_val, max_val)  # Ensure the value is within the limit
+        slider.set(float(var.get()))  # Update the slider
+
+    def update_range_slider_from_entries(self, range_slider, min_var, max_var, min_val, max_val):
+        self.limit_value(min_var, min_val, max_var.get())  # Limit min entry value based on slider's range
+        self.limit_value(max_var, min_var.get(), max_val)  # Limit max entry value based on slider's range
+        range_slider.forceValues([float(min_var.get()), float(max_var.get())])  # Update the range slider
 
     def select_background_images(self):
         """Open file dialog to select background images."""
