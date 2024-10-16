@@ -58,7 +58,8 @@ class SyntheticImageGenerator:
 
     def create_slider_with_entry(self, main_frame, label_text, variable, from_, to, row, column):
         ttk.Label(main_frame, text=label_text).grid(row=row, column=0, padx=10, pady=10)
-        num_entry = ttk.Entry(main_frame, textvariable=variable, width=5)
+        num_entry = ttk.Entry(main_frame, textvariable=variable, width=5, 
+                              validate='all', validatecommand=(self.root.register(self.validate_digit), '%P'))
         num_entry.grid(row=row, column=1, padx=10, pady=10)  # Entry on the left
         try:
             slider = ttk.LabeledScale(main_frame, variable=variable, from_=from_, to=to)
@@ -66,11 +67,12 @@ class SyntheticImageGenerator:
             slider = ttk.Scale(main_frame, variable=variable, from_=from_, to=to)
         slider.grid(row=row, column=2, padx=10, pady=10)  # Slider to the right of the entry
         # Bind the entry to update the slider
-        num_entry.bind("<Return>", lambda e: self.update_slider_from_entry(num_entry, slider, variable, from_, to))
+        num_entry.bind("<Return>", lambda e: self.update_slider_from_entry(slider, variable, from_, to))
 
     def create_range_slider_with_entries(self, main_frame, label_text, variables, min_val, max_val, step_size, row):
         ttk.Label(main_frame, text=label_text).grid(row=row, column=0, padx=10, pady=10)
-        min_entry = ttk.Entry(main_frame, textvariable=variables[0], width=5)
+        min_entry = ttk.Entry(main_frame, textvariable=variables[0], width=5, 
+                              validate='all', validatecommand=(self.root.register(self.validate_digit), '%P'))
         min_entry.grid(row=row, column=1, padx=5, pady=10)  # Entry for min value on the left
         range_slider = RangeSliderH(main_frame, variables=variables, min_val=min_val, max_val=max_val, 
                                     step_size=step_size, padX=18, Width=150, Height=50, bgColor='#1c1c1c', 
@@ -78,13 +80,23 @@ class SyntheticImageGenerator:
                                     bar_color_inner="#57c8ff", bar_color_outer="#595959", bar_radius=10,
                                     line_s_color="#57c8ff", line_color="#9c9c9c", line_width=4)
         range_slider.grid(row=row, column=2, pady=10)  # Slider in the middle
-        max_entry = ttk.Entry(main_frame, textvariable=variables[1], width=5)
+        max_entry = ttk.Entry(main_frame, textvariable=variables[1], width=5, 
+                              validate='all', validatecommand=(self.root.register(self.validate_digit), '%P'))
         max_entry.grid(row=row, column=3, pady=10)  # Entry for max value on the right
         
         # Bind entries to update the slider when the entry value changes with limits
         min_entry.bind("<Return>", lambda e: self.update_range_slider_from_entries(range_slider, variables[0], variables[1], min_val, max_val))
         max_entry.bind("<Return>", lambda e: self.update_range_slider_from_entries(range_slider, variables[0], variables[1], min_val, max_val))
 
+    def validate_digit(self, P):
+        if P is None: 
+            return False
+        try:
+            float(P)
+            return True
+        except ValueError:
+            return False
+    
     # Function to limit the entry value based on min_val and max_val
     def limit_value(self, var, min_val, max_val):
         try:
@@ -94,9 +106,7 @@ class SyntheticImageGenerator:
             elif value > max_val:
                 var.set(max_val)
         except tk.TclError:
-            # If the input is empty, reset it to min_val
-            if var.get() == "":
-                var.set(min_val)
+            var.set(min_val)
 
     # Function to update the slider when the entry value changes and apply value limits
     def update_slider_from_entry(self, slider, var, min_val, max_val):
