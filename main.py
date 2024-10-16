@@ -219,7 +219,7 @@ class SyntheticImageGenerator:
             # Skip if the object is larger than background
             if bg_width - obj_width < 0 or bg_height - obj_height < 0:
                 messagebox.showerror("Error", f"Object size {obj_width}x{obj_height} is larger than BG size {bg_width}x{bg_height}, normalization is recommended")
-                continue
+                return
             
             # Randomize position
             pos_x = random.randint(0, bg_width - obj_width)
