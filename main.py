@@ -9,7 +9,7 @@ import sv_ttk
 class SyntheticImageGenerator:
     def __init__(self, root):
         self.root = root
-        self.root.title("Synthetic Data Generator")
+        self.root.title("Synthetic Image Generator")
         
         sv_ttk.use_dark_theme()
 
