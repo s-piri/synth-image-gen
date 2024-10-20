@@ -48,7 +48,12 @@ class SyntheticImageGenerator:
         self.obj_label = ttk.Label(main_frame, text="0 Classes Selected")
         self.obj_label.grid(row=1, column=1, padx=10, pady=10)
         
-        self.create_slider_with_entry(main_frame, "Number of Images", self.num_images_var, 1, 100, row=2, column=0)
+        self.no_of_img_label = ttk.Label(main_frame, text="Number of Images")
+        self.no_of_img_label.grid(row=2, column=0, padx=10, pady=10)
+
+        self.no_of_img_sbox = ttk.Spinbox(main_frame, increment=1, from_=1, to=100, textvariable=self.num_images_var, width=4)
+        self.no_of_img_sbox.grid(row=2, column=1, padx=10, pady=10)
+        #self.create_slider_with_entry(main_frame, "Number of Images", self.num_images_var, 1, 100, row=2, column=0)
         self.create_range_slider_with_entries(main_frame, "Scale Range (Min-Max)", [self.scale_min_var, self.scale_max_var], 0.2, 3.0, 0.1, row=3)
         self.create_range_slider_with_entries(main_frame, "Objects per Image (Min-Max)", [self.obj_min_var, self.obj_max_var], 1, 20, 1, row=4)
         self.create_range_slider_with_entries(main_frame, "Rotation Range (Min-Max)", [self.rot_min_var, self.rot_max_var], -180, 180, 1, row=5)
