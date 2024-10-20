@@ -27,7 +27,7 @@ class SyntheticImageGenerator:
         self.rot_max_var = tk.DoubleVar(value=90.0)
 
         # The assigned value beside 1 is somehow not reflected on ttk.LabeledScale
-        self.num_images_var = tk.IntVar(value=1)
+        self.num_images_var = tk.IntVar(value=10)
 
         self.setup_ui()
 
